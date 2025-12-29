@@ -1,0 +1,33 @@
+# Ignore node_modules
+node_modules/
+
+# Ignore build output
+dist/
+build/
+.next/
+out/
+
+# Ignore environment variable files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Ignore log files
+logs/
+*.log
+
+# Ignore OS generated files
+.DS_Store
+Thumbs.db
+
+# Ignore IDE specific files     
+.vscode/
+.idea/
+
+# Ignore Next.js specific files
+.next/
+.turbo/
+*.tsbuildinfo
+next-env.d.ts
