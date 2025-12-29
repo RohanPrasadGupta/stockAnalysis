@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box,
   Typography,
@@ -23,6 +24,9 @@ import {
   MenuItem,
   IconButton,
   Autocomplete,
+  CircularProgress,
+  Alert,
+  Snackbar,
 } from '@mui/material'
 import TrendingUpIcon from '@mui/icons-material/TrendingUp'
 import TrendingDownIcon from '@mui/icons-material/TrendingDown'
@@ -30,12 +34,135 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import ShowChartIcon from '@mui/icons-material/ShowChart'
 import AddIcon from '@mui/icons-material/Add'
 import CloseIcon from '@mui/icons-material/Close'
-import mockData from '../mockdata/data.json'
+import EditIcon from '@mui/icons-material/Edit'
+import DeleteIcon from '@mui/icons-material/Delete'
+
+const API_BASE_URL = 'https://stock-analysis-backend-yd8w.onrender.com/api'
 
 const Home = () => {
-  const transactions = mockData.transactions || []
+  const queryClient = useQueryClient()
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' })
+
+  // Fetch transactions using React Query
+  const { data: apiResponse, isLoading, isError, error } = useQuery({
+    queryKey: ['transactions'],
+    queryFn: async () => {
+      const response = await fetch(`${API_BASE_URL}/transactions`)
+      if (!response.ok) {
+        throw new Error('Failed to fetch transactions')
+      }
+      return response.json()
+    }
+  })
+
+  // Mutation for adding new transaction
+  const addTransactionMutation = useMutation({
+    mutationFn: async (newTransaction) => {
+      const response = await fetch(`${API_BASE_URL}/transactions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newTransaction),
+      })
+      
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || 'Failed to add transaction')
+      }
+      
+      return response.json()
+    },
+    onSuccess: () => {
+      // Invalidate and refetch transactions
+      queryClient.invalidateQueries({ queryKey: ['transactions'] })
+      setSnackbar({
+        open: true,
+        message: 'Transaction added successfully!',
+        severity: 'success'
+      })
+      handleCloseDialog()
+    },
+    onError: (error) => {
+      setSnackbar({
+        open: true,
+        message: error.message || 'Failed to add transaction',
+        severity: 'error'
+      })
+    }
+  })
+
+  // Mutation for updating transaction
+  const updateTransactionMutation = useMutation({
+    mutationFn: async ({ id, updatedData }) => {
+      const response = await fetch(`${API_BASE_URL}/transactions/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedData),
+      })
+      
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || 'Failed to update transaction')
+      }
+      
+      return response.json()
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['transactions'] })
+      setSnackbar({
+        open: true,
+        message: 'Transaction updated successfully!',
+        severity: 'success'
+      })
+      handleCloseDialog()
+    },
+    onError: (error) => {
+      setSnackbar({
+        open: true,
+        message: error.message || 'Failed to update transaction',
+        severity: 'error'
+      })
+    }
+  })
+
+  // Mutation for deleting transaction
+  const deleteTransactionMutation = useMutation({
+    mutationFn: async (id) => {
+      const response = await fetch(`${API_BASE_URL}/transactions/${id}`, {
+        method: 'DELETE',
+      })
+      
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || 'Failed to delete transaction')
+      }
+      
+      return response.json()
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['transactions'] })
+      setSnackbar({
+        open: true,
+        message: 'Transaction deleted successfully!',
+        severity: 'success'
+      })
+    },
+    onError: (error) => {
+      setSnackbar({
+        open: true,
+        message: error.message || 'Failed to delete transaction',
+        severity: 'error'
+      })
+    }
+  })
+
+  const transactions = apiResponse?.data || []
   const [openDialog, setOpenDialog] = useState(false)
   const [selectedStock, setSelectedStock] = useState(null)
+  const [editingTransaction, setEditingTransaction] = useState(null)
   
   // Use lazy initializer to avoid hydration mismatch
   const getDefaultFormData = () => ({
@@ -56,6 +183,7 @@ const Home = () => {
 
   const handleOpenDialog = (stockSymbol = null) => {
     setSelectedStock(stockSymbol)
+    setEditingTransaction(null)
     const stockInfo = stockSymbol ? transactions.find(t => t.stockSymbol === stockSymbol) : null
     setFormData({
       stockSymbol: stockSymbol || '',
@@ -68,9 +196,30 @@ const Home = () => {
     setOpenDialog(true)
   }
 
+  const handleEditTransaction = (transaction) => {
+    setEditingTransaction(transaction)
+    setSelectedStock(transaction.stockSymbol)
+    setFormData({
+      stockSymbol: transaction.stockSymbol,
+      stockName: transaction.stockName,
+      type: transaction.type,
+      price: transaction.price.toString(),
+      quantity: transaction.quantity.toString(),
+      investedDate: new Date(transaction.investedDate).toISOString().split('T')[0]
+    })
+    setOpenDialog(true)
+  }
+
+  const handleDeleteTransaction = (id) => {
+    if (window.confirm('Are you sure you want to delete this transaction?')) {
+      deleteTransactionMutation.mutate(id)
+    }
+  }
+
   const handleCloseDialog = () => {
     setOpenDialog(false)
     setSelectedStock(null)
+    setEditingTransaction(null)
     setFormData(getDefaultFormData())
   }
 
@@ -82,22 +231,31 @@ const Home = () => {
     // Calculate total amount
     const totalAmount = parseFloat(formData.price) * parseFloat(formData.quantity)
     
-    const newTransaction = {
-      _id: `tx${String(transactions.length + 1).padStart(3, '0')}`,
-      stockSymbol: formData.stockSymbol.toUpperCase(),
-      stockName: formData.stockName,
-      type: formData.type,
-      price: parseFloat(formData.price),
-      quantity: parseFloat(formData.quantity),
-      totalAmount: totalAmount,
-      investedDate: formData.investedDate
+    if (editingTransaction) {
+      // Update existing transaction
+      const updatedData = {
+        stockSymbol: formData.stockSymbol.toUpperCase(),
+        stockName: formData.stockName,
+        type: formData.type,
+        price: parseFloat(formData.price),
+        quantity: parseFloat(formData.quantity),
+        totalAmount: totalAmount,
+        investedDate: formData.investedDate
+      }
+      updateTransactionMutation.mutate({ id: editingTransaction._id, updatedData })
+    } else {
+      // Add new transaction
+      const newTransaction = {
+        stockSymbol: formData.stockSymbol.toUpperCase(),
+        stockName: formData.stockName,
+        type: formData.type,
+        price: parseFloat(formData.price),
+        quantity: parseFloat(formData.quantity),
+        totalAmount: totalAmount,
+        investedDate: formData.investedDate
+      }
+      addTransactionMutation.mutate(newTransaction)
     }
-
-    console.log('New Transaction:', newTransaction)
-    // TODO: Add logic to save to data.json or backend
-    
-    alert('Transaction added successfully! (Currently logged to console)')
-    handleCloseDialog()
   }
 
   // Group transactions by stock symbol
@@ -179,6 +337,47 @@ const Home = () => {
       background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
       p: 4 
     }}>
+      {/* Loading State */}
+      {isLoading && (
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: 'column',
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          minHeight: '50vh',
+          gap: 2
+        }}>
+          <CircularProgress size={60} sx={{ color: '#fff' }} />
+          <Typography variant="h6" sx={{ color: '#fff', fontWeight: 500 }}>
+            Loading transactions...
+          </Typography>
+        </Box>
+      )}
+
+      {/* Error State */}
+      {isError && (
+        <Alert 
+          severity="error" 
+          sx={{ 
+            maxWidth: 600, 
+            mx: 'auto',
+            mt: 4,
+            borderRadius: 2,
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)'
+          }}
+        >
+          <Typography variant="h6" gutterBottom>
+            Failed to load transactions
+          </Typography>
+          <Typography variant="body2">
+            {error?.message || 'An error occurred while fetching data. Please try again later.'}
+          </Typography>
+        </Alert>
+      )}
+
+      {/* Main Content */}
+      {!isLoading && !isError && (
+        <>
       <Box sx={{ 
         mb: 4, 
         display: 'flex', 
@@ -460,7 +659,7 @@ const Home = () => {
                   <Table stickyHeader>
                     <TableHead>
                       <TableRow>
-                        <TableCell sx={{ 
+                        <TableCell align="center" sx={{ 
                           fontWeight: 'bold', 
                           fontSize: '0.85rem', 
                           backgroundColor: '#667eea',
@@ -470,7 +669,7 @@ const Home = () => {
                         }}>
                           Type
                         </TableCell>
-                        <TableCell align="right" sx={{ 
+                        <TableCell align="center" sx={{ 
                           fontWeight: 'bold', 
                           fontSize: '0.85rem', 
                           backgroundColor: '#667eea',
@@ -480,7 +679,7 @@ const Home = () => {
                         }}>
                           Price
                         </TableCell>
-                        <TableCell align="right" sx={{ 
+                        <TableCell align="center" sx={{ 
                           fontWeight: 'bold', 
                           fontSize: '0.85rem', 
                           backgroundColor: '#667eea',
@@ -490,7 +689,7 @@ const Home = () => {
                         }}>
                           Quantity
                         </TableCell>
-                        <TableCell align="right" sx={{ 
+                        <TableCell align="center" sx={{ 
                           fontWeight: 'bold', 
                           fontSize: '0.85rem', 
                           backgroundColor: '#667eea',
@@ -500,7 +699,7 @@ const Home = () => {
                         }}>
                           Total Amount
                         </TableCell>
-                        <TableCell sx={{ 
+                        <TableCell align="center" sx={{ 
                           fontWeight: 'bold', 
                           fontSize: '0.85rem', 
                           backgroundColor: '#667eea',
@@ -509,6 +708,16 @@ const Home = () => {
                           textTransform: 'uppercase'
                         }}>
                           Date
+                        </TableCell>
+                        <TableCell align="center" sx={{ 
+                          fontWeight: 'bold', 
+                          fontSize: '0.85rem', 
+                          backgroundColor: '#667eea',
+                          color: '#fff',
+                          letterSpacing: 0.5,
+                          textTransform: 'uppercase'
+                        }}>
+                          Actions
                         </TableCell>
                       </TableRow>
                     </TableHead>
@@ -530,7 +739,7 @@ const Home = () => {
                             }
                           }}
                         >
-                          <TableCell>
+                          <TableCell align="center">
                             <Chip
                               label={transaction.type}
                               icon={transaction.type === 'BUY' ? <TrendingUpIcon /> : <TrendingDownIcon />}
@@ -543,25 +752,58 @@ const Home = () => {
                               }}
                             />
                           </TableCell>
-                          <TableCell align="right">
+                          <TableCell align="center">
                             <Typography variant="body2" fontWeight="500" sx={{ color: '#1a1a2e' }}>
                               {formatCurrency(transaction.price)}
                             </Typography>
                           </TableCell>
-                          <TableCell align="right">
+                          <TableCell align="center">
                             <Typography variant="body2" fontWeight="600" sx={{ color: '#667eea' }}>
                               {transaction.quantity}
                             </Typography>
                           </TableCell>
-                          <TableCell align="right">
+                          <TableCell align="center">
                             <Typography variant="body1" fontWeight="700" sx={{ color: '#1a1a2e' }}>
                               {formatCurrency(transaction.totalAmount)}
                             </Typography>
                           </TableCell>
-                          <TableCell>
+                          <TableCell align="center">
                             <Typography variant="body2" sx={{ color: '#666' }}>
                               {formatDate(transaction.investedDate)}
                             </Typography>
+                          </TableCell>
+                          <TableCell align="center">
+                            <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center' }}>
+                              <IconButton
+                                size="small"
+                                onClick={() => handleEditTransaction(transaction)}
+                                sx={{
+                                  color: '#667eea',
+                                  '&:hover': {
+                                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                                    transform: 'scale(1.1)'
+                                  },
+                                  transition: 'all 0.2s ease'
+                                }}
+                              >
+                                <EditIcon fontSize="small" />
+                              </IconButton>
+                              <IconButton
+                                size="small"
+                                onClick={() => handleDeleteTransaction(transaction._id)}
+                                disabled={deleteTransactionMutation.isPending}
+                                sx={{
+                                  color: '#ff6b6b',
+                                  '&:hover': {
+                                    backgroundColor: 'rgba(255, 107, 107, 0.1)',
+                                    transform: 'scale(1.1)'
+                                  },
+                                  transition: 'all 0.2s ease'
+                                }}
+                              >
+                                <DeleteIcon fontSize="small" />
+                              </IconButton>
+                            </Box>
                           </TableCell>
                         </TableRow>
                       ))}
@@ -596,9 +838,9 @@ const Home = () => {
           pb: 2
         }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <AddIcon />
+            {editingTransaction ? <EditIcon /> : <AddIcon />}
             <Typography variant="h6" fontWeight="bold">
-              Add New Transaction
+              {editingTransaction ? 'Edit Transaction' : 'Add New Transaction'}
             </Typography>
           </Box>
           <IconButton onClick={handleCloseDialog} sx={{ color: '#fff' }}>
@@ -611,6 +853,7 @@ const Home = () => {
             {/* Stock Symbol Field */}
             <Autocomplete
               freeSolo
+              disabled={!!editingTransaction}
               options={stockOptions}
               getOptionLabel={(option) => {
                 if (typeof option === 'string') return option
@@ -653,7 +896,13 @@ const Home = () => {
                   required
                   fullWidth
                   placeholder="Enter or select stock symbol"
-                  helperText={selectedStock ? `Adding transaction for ${selectedStock}` : 'Select existing or enter new stock symbol'}
+                  helperText={
+                    editingTransaction 
+                      ? 'Stock symbol cannot be changed' 
+                      : selectedStock 
+                        ? `Adding transaction for ${selectedStock}` 
+                        : 'Select existing or enter new stock symbol'
+                  }
                 />
               )}
             />
@@ -665,8 +914,9 @@ const Home = () => {
               onChange={(e) => handleFormChange('stockName', e.target.value)}
               required
               fullWidth
+              disabled={!!editingTransaction}
               placeholder="Enter the full company name"
-              helperText="Full name of the company"
+              helperText={editingTransaction ? 'Stock name cannot be changed' : 'Full name of the company'}
             />
 
             {/* Transaction Type */}
@@ -760,7 +1010,15 @@ const Home = () => {
           <Button 
             onClick={handleSubmit}
             variant="contained"
-            disabled={!formData.stockSymbol || !formData.stockName || !formData.price || !formData.quantity || !formData.investedDate}
+            disabled={
+              !formData.stockSymbol || 
+              !formData.stockName || 
+              !formData.price || 
+              !formData.quantity || 
+              !formData.investedDate || 
+              addTransactionMutation.isPending ||
+              updateTransactionMutation.isPending
+            }
             sx={{
               background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
               color: '#fff',
@@ -776,10 +1034,35 @@ const Home = () => {
               }
             }}
           >
-            Add Transaction
+            {(addTransactionMutation.isPending || updateTransactionMutation.isPending) ? (
+              <>
+                <CircularProgress size={20} sx={{ color: '#fff', mr: 1 }} />
+                {editingTransaction ? 'Updating...' : 'Adding...'}
+              </>
+            ) : (
+              editingTransaction ? 'Update Transaction' : 'Add Transaction'
+            )}
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Snackbar for notifications */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          severity={snackbar.severity}
+          sx={{ width: '100%' }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
+        </>
+      )}
     </Box>
   )
 }
