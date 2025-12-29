@@ -1,0 +1,261 @@
+{
+  "transactions": [
+    {
+      "_id": "tx001",
+      "stockSymbol": "NABIL",
+      "type": "BUY",
+      "price": 520,
+      "quantity": 50,
+      "totalAmount": 26000,
+      "investedDate": "2023-02-10"
+    },
+    {
+      "_id": "tx002",
+      "stockSymbol": "NABIL",
+      "type": "BUY",
+      "price": 505,
+      "quantity": 70,
+      "totalAmount": 35350,
+      "investedDate": "2023-06-15"
+    },
+    {
+      "_id": "tx003",
+      "stockSymbol": "NABIL",
+      "type": "BUY",
+      "price": 498,
+      "quantity": 80,
+      "totalAmount": 39840,
+      "investedDate": "2023-11-20"
+    },
+    {
+      "_id": "tx004",
+      "stockSymbol": "NABIL",
+      "type": "BUY",
+      "price": 492,
+      "quantity": 60,
+      "totalAmount": 29520,
+      "investedDate": "2024-04-10"
+    },
+    {
+      "_id": "tx005",
+      "stockSymbol": "NABIL",
+      "type": "BUY",
+      "price": 490,
+      "quantity": 60,
+      "totalAmount": 29400,
+      "investedDate": "2024-11-15"
+    },
+
+    {
+      "_id": "tx006",
+      "stockSymbol": "NICA",
+      "type": "BUY",
+      "price": 510,
+      "quantity": 60,
+      "totalAmount": 30600,
+      "investedDate": "2023-01-12"
+    },
+    {
+      "_id": "tx007",
+      "stockSymbol": "NICA",
+      "type": "BUY",
+      "price": 495,
+      "quantity": 80,
+      "totalAmount": 39600,
+      "investedDate": "2023-07-18"
+    },
+    {
+      "_id": "tx008",
+      "stockSymbol": "NICA",
+      "type": "BUY",
+      "price": 480,
+      "quantity": 70,
+      "totalAmount": 33600,
+      "investedDate": "2024-03-05"
+    },
+    {
+      "_id": "tx009",
+      "stockSymbol": "NICA",
+      "type": "BUY",
+      "price": 470,
+      "quantity": 70,
+      "totalAmount": 32900,
+      "investedDate": "2024-10-05"
+    },
+
+    {
+      "_id": "tx010",
+      "stockSymbol": "GBIME",
+      "type": "BUY",
+      "price": 480,
+      "quantity": 80,
+      "totalAmount": 38400,
+      "investedDate": "2023-02-01"
+    },
+    {
+      "_id": "tx011",
+      "stockSymbol": "GBIME",
+      "type": "BUY",
+      "price": 470,
+      "quantity": 90,
+      "totalAmount": 42300,
+      "investedDate": "2023-08-20"
+    },
+    {
+      "_id": "tx012",
+      "stockSymbol": "GBIME",
+      "type": "BUY",
+      "price": 460,
+      "quantity": 70,
+      "totalAmount": 32200,
+      "investedDate": "2024-02-14"
+    },
+    {
+      "_id": "tx013",
+      "stockSymbol": "GBIME",
+      "type": "BUY",
+      "price": 455,
+      "quantity": 60,
+      "totalAmount": 27300,
+      "investedDate": "2024-11-10"
+    },
+
+    {
+      "_id": "tx014",
+      "stockSymbol": "CHCL",
+      "type": "BUY",
+      "price": 450,
+      "quantity": 60,
+      "totalAmount": 27000,
+      "investedDate": "2023-08-05"
+    },
+    {
+      "_id": "tx015",
+      "stockSymbol": "CHCL",
+      "type": "BUY",
+      "price": 430,
+      "quantity": 70,
+      "totalAmount": 30100,
+      "investedDate": "2024-01-22"
+    },
+    {
+      "_id": "tx016",
+      "stockSymbol": "CHCL",
+      "type": "BUY",
+      "price": 420,
+      "quantity": 70,
+      "totalAmount": 29400,
+      "investedDate": "2024-12-20"
+    },
+
+    {
+      "_id": "tx017",
+      "stockSymbol": "NHPC",
+      "type": "BUY",
+      "price": 350,
+      "quantity": 90,
+      "totalAmount": 31500,
+      "investedDate": "2023-09-10"
+    },
+    {
+      "_id": "tx018",
+      "stockSymbol": "NHPC",
+      "type": "BUY",
+      "price": 330,
+      "quantity": 100,
+      "totalAmount": 33000,
+      "investedDate": "2024-04-01"
+    },
+    {
+      "_id": "tx019",
+      "stockSymbol": "NHPC",
+      "type": "BUY",
+      "price": 320,
+      "quantity": 110,
+      "totalAmount": 35200,
+      "investedDate": "2024-11-08"
+    },
+
+    {
+      "_id": "tx020",
+      "stockSymbol": "AKPL",
+      "type": "BUY",
+      "price": 340,
+      "quantity": 80,
+      "totalAmount": 27200,
+      "investedDate": "2023-11-02"
+    },
+    {
+      "_id": "tx021",
+      "stockSymbol": "AKPL",
+      "type": "BUY",
+      "price": 325,
+      "quantity": 90,
+      "totalAmount": 29250,
+      "investedDate": "2024-05-18"
+    },
+    {
+      "_id": "tx022",
+      "stockSymbol": "AKPL",
+      "type": "BUY",
+      "price": 315,
+      "quantity": 90,
+      "totalAmount": 28350,
+      "investedDate": "2024-12-28"
+    },
+    {
+      "_id": "tx023",
+      "stockSymbol": "NABIL",
+      "type": "SELL",
+      "price": 530,
+      "quantity": 50,
+      "totalAmount": 26500,
+      "investedDate": "2024-06-15"
+    },
+    {
+      "_id": "tx024",
+      "stockSymbol": "NABIL",
+      "type": "SELL",
+      "price": 545,
+      "quantity": 70,
+      "totalAmount": 38150,
+      "investedDate": "2024-09-20"
+    },
+    {
+      "_id": "tx025",
+      "stockSymbol": "NICA",
+      "type": "SELL",
+      "price": 520,
+      "quantity": 60,
+      "totalAmount": 31200,
+      "investedDate": "2024-08-10"
+    },
+    {
+      "_id": "tx026",
+      "stockSymbol": "GBIME",
+      "type": "SELL",
+      "price": 485,
+      "quantity": 80,
+      "totalAmount": 38800,
+      "investedDate": "2024-07-22"
+    },
+    {
+      "_id": "tx027",
+      "stockSymbol": "CHCL",
+      "type": "SELL",
+      "price": 460,
+      "quantity": 50,
+      "totalAmount": 23000,
+      "investedDate": "2024-10-15"
+    },
+    {
+      "_id": "tx028",
+      "stockSymbol": "NHPC",
+      "type": "SELL",
+      "price": 345,
+      "quantity": 100,
+      "totalAmount": 34500,
+      "investedDate": "2024-12-01"
+    }
+  ]
+}
