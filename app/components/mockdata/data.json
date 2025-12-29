@@ -3,6 +3,7 @@
     {
       "_id": "tx001",
       "stockSymbol": "NABIL",
+      "stockName": "Nabil Bank Limited",
       "type": "BUY",
       "price": 520,
       "quantity": 50,
@@ -12,6 +13,7 @@
     {
       "_id": "tx002",
       "stockSymbol": "NABIL",
+      "stockName": "Nabil Bank Limited",
       "type": "BUY",
       "price": 505,
       "quantity": 70,
@@ -21,6 +23,7 @@
     {
       "_id": "tx003",
       "stockSymbol": "NABIL",
+      "stockName": "Nabil Bank Limited",
       "type": "BUY",
       "price": 498,
       "quantity": 80,
@@ -30,6 +33,7 @@
     {
       "_id": "tx004",
       "stockSymbol": "NABIL",
+      "stockName": "Nabil Bank Limited",
       "type": "BUY",
       "price": 492,
       "quantity": 60,
@@ -39,6 +43,7 @@
     {
       "_id": "tx005",
       "stockSymbol": "NABIL",
+      "stockName": "Nabil Bank Limited",
       "type": "BUY",
       "price": 490,
       "quantity": 60,
@@ -49,6 +54,7 @@
     {
       "_id": "tx006",
       "stockSymbol": "NICA",
+      "stockName": "NIC Asia Bank Limited",
       "type": "BUY",
       "price": 510,
       "quantity": 60,
@@ -58,6 +64,7 @@
     {
       "_id": "tx007",
       "stockSymbol": "NICA",
+      "stockName": "NIC Asia Bank Limited",
       "type": "BUY",
       "price": 495,
       "quantity": 80,
@@ -67,6 +74,7 @@
     {
       "_id": "tx008",
       "stockSymbol": "NICA",
+      "stockName": "NIC Asia Bank Limited",
       "type": "BUY",
       "price": 480,
       "quantity": 70,
@@ -76,6 +84,7 @@
     {
       "_id": "tx009",
       "stockSymbol": "NICA",
+      "stockName": "NIC Asia Bank Limited",
       "type": "BUY",
       "price": 470,
       "quantity": 70,
@@ -86,6 +95,7 @@
     {
       "_id": "tx010",
       "stockSymbol": "GBIME",
+      "stockName": "Global IME Bank Limited",
       "type": "BUY",
       "price": 480,
       "quantity": 80,
@@ -95,6 +105,7 @@
     {
       "_id": "tx011",
       "stockSymbol": "GBIME",
+      "stockName": "Global IME Bank Limited",
       "type": "BUY",
       "price": 470,
       "quantity": 90,
@@ -104,6 +115,7 @@
     {
       "_id": "tx012",
       "stockSymbol": "GBIME",
+      "stockName": "Global IME Bank Limited",
       "type": "BUY",
       "price": 460,
       "quantity": 70,
@@ -113,6 +125,7 @@
     {
       "_id": "tx013",
       "stockSymbol": "GBIME",
+      "stockName": "Global IME Bank Limited",
       "type": "BUY",
       "price": 455,
       "quantity": 60,
@@ -123,6 +136,7 @@
     {
       "_id": "tx014",
       "stockSymbol": "CHCL",
+      "stockName": "Chilime Hydropower Company Limited",
       "type": "BUY",
       "price": 450,
       "quantity": 60,
@@ -132,6 +146,7 @@
     {
       "_id": "tx015",
       "stockSymbol": "CHCL",
+      "stockName": "Chilime Hydropower Company Limited",
       "type": "BUY",
       "price": 430,
       "quantity": 70,
@@ -141,6 +156,7 @@
     {
       "_id": "tx016",
       "stockSymbol": "CHCL",
+      "stockName": "Chilime Hydropower Company Limited",
       "type": "BUY",
       "price": 420,
       "quantity": 70,
@@ -151,6 +167,7 @@
     {
       "_id": "tx017",
       "stockSymbol": "NHPC",
+      "stockName": "National Hydropower Company Limited",
       "type": "BUY",
       "price": 350,
       "quantity": 90,
@@ -160,6 +177,7 @@
     {
       "_id": "tx018",
       "stockSymbol": "NHPC",
+      "stockName": "National Hydropower Company Limited",
       "type": "BUY",
       "price": 330,
       "quantity": 100,
@@ -169,6 +187,7 @@
     {
       "_id": "tx019",
       "stockSymbol": "NHPC",
+      "stockName": "National Hydropower Company Limited",
       "type": "BUY",
       "price": 320,
       "quantity": 110,
@@ -179,6 +198,7 @@
     {
       "_id": "tx020",
       "stockSymbol": "AKPL",
+      "stockName": "Arun Kabeli Power Limited",
       "type": "BUY",
       "price": 340,
       "quantity": 80,
@@ -188,6 +208,7 @@
     {
       "_id": "tx021",
       "stockSymbol": "AKPL",
+      "stockName": "Arun Kabeli Power Limited",
       "type": "BUY",
       "price": 325,
       "quantity": 90,
@@ -197,6 +218,7 @@
     {
       "_id": "tx022",
       "stockSymbol": "AKPL",
+      "stockName": "Arun Kabeli Power Limited",
       "type": "BUY",
       "price": 315,
       "quantity": 90,
@@ -206,6 +228,7 @@
     {
       "_id": "tx023",
       "stockSymbol": "NABIL",
+      "stockName": "Nabil Bank Limited",
       "type": "SELL",
       "price": 530,
       "quantity": 50,
@@ -215,6 +238,7 @@
     {
       "_id": "tx024",
       "stockSymbol": "NABIL",
+      "stockName": "Nabil Bank Limited",
       "type": "SELL",
       "price": 545,
       "quantity": 70,
@@ -224,6 +248,7 @@
     {
       "_id": "tx025",
       "stockSymbol": "NICA",
+      "stockName": "NIC Asia Bank Limited",
       "type": "SELL",
       "price": 520,
       "quantity": 60,
@@ -233,6 +258,7 @@
     {
       "_id": "tx026",
       "stockSymbol": "GBIME",
+      "stockName": "Global IME Bank Limited",
       "type": "SELL",
       "price": 485,
       "quantity": 80,
@@ -242,6 +268,7 @@
     {
       "_id": "tx027",
       "stockSymbol": "CHCL",
+      "stockName": "Chilime Hydropower Company Limited",
       "type": "SELL",
       "price": 460,
       "quantity": 50,
@@ -251,6 +278,7 @@
     {
       "_id": "tx028",
       "stockSymbol": "NHPC",
+      "stockName": "National Hydropower Company Limited",
       "type": "SELL",
       "price": 345,
       "quantity": 100,

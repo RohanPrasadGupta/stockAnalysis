@@ -40,6 +40,7 @@ const Home = () => {
   // Use lazy initializer to avoid hydration mismatch
   const getDefaultFormData = () => ({
     stockSymbol: '',
+    stockName: '',
     type: 'BUY',
     price: '',
     quantity: '',
@@ -48,13 +49,17 @@ const Home = () => {
   
   const [formData, setFormData] = useState(getDefaultFormData)
 
-  // Get unique stock symbols for autocomplete
-  const stockSymbols = [...new Set(transactions.map(t => t.stockSymbol))].sort()
+  // Get unique stock symbols and names for autocomplete
+  const stockOptions = [...new Map(
+    transactions.map(t => [t.stockSymbol, { symbol: t.stockSymbol, name: t.stockName }])
+  ).values()].sort((a, b) => a.symbol.localeCompare(b.symbol))
 
   const handleOpenDialog = (stockSymbol = null) => {
     setSelectedStock(stockSymbol)
+    const stockInfo = stockSymbol ? transactions.find(t => t.stockSymbol === stockSymbol) : null
     setFormData({
       stockSymbol: stockSymbol || '',
+      stockName: stockInfo?.stockName || '',
       type: 'BUY',
       price: '',
       quantity: '',
@@ -80,6 +85,7 @@ const Home = () => {
     const newTransaction = {
       _id: `tx${String(transactions.length + 1).padStart(3, '0')}`,
       stockSymbol: formData.stockSymbol.toUpperCase(),
+      stockName: formData.stockName,
       type: formData.type,
       price: parseFloat(formData.price),
       quantity: parseFloat(formData.quantity),
@@ -256,6 +262,7 @@ const Home = () => {
           const totalQuantity = calculateTotalQuantity(symbolTransactions)
           const averagePrice = calculateAveragePrice(symbolTransactions)
           const profitLoss = calculateProfitLoss(symbolTransactions)
+          const stockName = symbolTransactions[0]?.stockName || ''
 
           return (
             <Accordion 
@@ -310,6 +317,14 @@ const Home = () => {
                     <Typography variant="body2" sx={{ 
                       color: '#667eea',
                       fontWeight: 500
+                    }}>
+                      {stockName}
+                    </Typography>
+                    <Typography variant="caption" sx={{ 
+                      color: '#999',
+                      fontWeight: 400,
+                      display: 'block',
+                      mt: 0.5
                     }}>
                       {symbolTransactions.length} transactions • {totalQuantity} shares
                     </Typography>
@@ -596,14 +611,41 @@ const Home = () => {
             {/* Stock Symbol Field */}
             <Autocomplete
               freeSolo
-              options={stockSymbols}
-              value={formData.stockSymbol}
+              options={stockOptions}
+              getOptionLabel={(option) => {
+                if (typeof option === 'string') return option
+                return option.symbol
+              }}
+              value={stockOptions.find(opt => opt.symbol === formData.stockSymbol) || formData.stockSymbol}
               onChange={(event, newValue) => {
-                handleFormChange('stockSymbol', newValue || '')
+                if (typeof newValue === 'string') {
+                  handleFormChange('stockSymbol', newValue)
+                  handleFormChange('stockName', '')
+                } else if (newValue) {
+                  handleFormChange('stockSymbol', newValue.symbol)
+                  handleFormChange('stockName', newValue.name)
+                } else {
+                  handleFormChange('stockSymbol', '')
+                  handleFormChange('stockName', '')
+                }
               }}
               onInputChange={(event, newValue) => {
-                handleFormChange('stockSymbol', newValue)
+                if (event && event.type === 'change') {
+                  handleFormChange('stockSymbol', newValue)
+                }
               }}
+              renderOption={(props, option) => (
+                <Box component="li" {...props}>
+                  <Box>
+                    <Typography variant="body1" fontWeight="600">
+                      {option.symbol}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {option.name}
+                    </Typography>
+                  </Box>
+                </Box>
+              )}
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -614,6 +656,17 @@ const Home = () => {
                   helperText={selectedStock ? `Adding transaction for ${selectedStock}` : 'Select existing or enter new stock symbol'}
                 />
               )}
+            />
+
+            {/* Stock Name Field */}
+            <TextField
+              label="Stock Name"
+              value={formData.stockName}
+              onChange={(e) => handleFormChange('stockName', e.target.value)}
+              required
+              fullWidth
+              placeholder="Enter the full company name"
+              helperText="Full name of the company"
             />
 
             {/* Transaction Type */}
@@ -707,7 +760,7 @@ const Home = () => {
           <Button 
             onClick={handleSubmit}
             variant="contained"
-            disabled={!formData.stockSymbol || !formData.price || !formData.quantity || !formData.investedDate}
+            disabled={!formData.stockSymbol || !formData.stockName || !formData.price || !formData.quantity || !formData.investedDate}
             sx={{
               background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
               color: '#fff',
